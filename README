@@ -1,0 +1,109 @@
+
+                  ###############################
+                  |                             |
+                  |  DOCUMENTATION FOR PROJECT  |
+                  |                             |
+                  |      NETFILTER-MANAGER      |
+                  |                             |
+                  |        VERSION 0.1          |
+                  |                             |
+                  ###############################
+
+
+PURPOSE
+#######
+
+The purpose of this application is to manage the netfilter rules for a number of
+remote hosts.
+
+netfilter rules can be created by entering either classic iptables rules or by
+entering Cisco firewall rules. This will be of convenience to those coming from
+the Cisco world and having trouble adapting themselves to iptables syntax :-)
+
+Rules are stored on the management node (most likely this host) until they are
+"pushed" to the distant node.
+
+FUNCTIONS
+#########
+
+Rule management :
+  - via Cisco rules
+  - via reguler iptables rules
+
+Host management :
+  - Manage hosts via their name and their DNS name or IP
+
+Rules export :
+  - Push rules via SSH
+  - Once pushed, execute rules script directly if root or via sudo if non-root
+
+
+USE
+###
+
+Help
+¡¡¡¡¡¡¡
+
+If you feel lost at any time, use the 'help' command which will give you extra
+information.
+
+You may also have to access top help for certain commands. This will be included
+in the generic help for the mode you are currently in.
+
+
+Exit
+¡¡¡¡¡¡¡
+If you wish to exit the program, you can enter "quit" at any time.
+
+If you wish to exit the mode you are currently in, you can enter "exit" at any
+time.
+
+Mode Selection
+¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
+
+First, you need to select the mode that you will be using. You can choose
+between 4 modes :
+
+    - add
+    - del
+    - push
+    - show
+
+The mode you are currently in will be shown at the prompt as shown below.
+
+    ex : (add) >
+
+    1. Add mode
+    -----------
+
+    The add mode will enable to you to add configuration information. There are
+two types of information you can add : host-specific and non-host-specific.
+
+    host-specific information needs you to select a host before you can add
+information. You can do this by using the "select" command as show below. If you
+do not select a host, the command will return an error asking you to select one.
+
+    ex : (add) > select test-host-1
+
+    Commands requiring host selection are the following :
+
+    - access-list
+    - iptables
+    - line
+
+    Commands that do not require host selection are the following :
+
+    - exit
+    - help
+    - host
+    - quit
+
+    We will now detail the use of the commands available in the add mode.
+
+    1. a) access-list command
+    =========================
+
+    This command is host-specific therefore requires host selection before it
+can be used.
+
+    This command allows you to add Cisco-style access lists to a host.
