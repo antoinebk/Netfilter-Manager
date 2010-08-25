@@ -43,8 +43,8 @@ Rules export :
   - Once pushed, execute rule script directly if root or via sudo if non-root
 
 
-USE
-###
+HOW TO USE
+##########
 
 Help
 ----
@@ -95,6 +95,7 @@ do not select a host, the command will return an error asking you to select one.
     - access-list
     - iptables
     - line
+    - template
 
     Commands that do not require host selection are the following :
 
@@ -160,6 +161,36 @@ will need to give a name and an IP/hostname.
 
     ex : (add) > host linuxhost 192.168.1.1
 
+        1. e) template command
+        ======================
+
+    This command is host-specific therefore requires host selection before it
+can be used. Optionnally, you can select a line on which to add the rule.
+
+    The name of the template used correspond to the name of the file found in
+the templates directory.
+
+    ex : cobalt for file cobalt.tpl
+
+    Arguments are declared before the 'START-TEMPLATE' flag.
+
+    ex : arguments = internalsubnet, externalsubnet, host
+
+    The 'START-TEMPLATE' flag tells the script to start replacing variables with
+the arguments given when adding the template.
+
+    Variables need to be written in the following format.
+
+    ex : {internalsubnet}, {externalsubnet}, {host}
+
+    When creating the script, you need to input the arguments specified in the
+template file.
+
+    Example uses :
+        - (add-linuxbox) > template cobalt 1.1.1.1 2.2.2.2 linuxbox
+        - (add-linuxbox:100) > template cobalt 1.1.1.1 2.2.2.2 linuxbox
+
+
     2. show mode
     ------------
 
@@ -205,3 +236,73 @@ IP or hostname.
     3. del mode
     -----------
 
+    The del mode will enable to you to delete configuration information. There
+are two types of information you can delete : host-specific and non-host-specific.
+
+    host-specific information needs you to select a host before you can delete
+information. You can do this by using the "select" command as show below. If you
+do not select a host, the command will return an error asking you to select one.
+
+    Commands requiring host selection are the following :
+    - line
+    - iptables
+
+    Commands that do not require host selection are the following :
+    - host
+    - help
+
+        3. a) line command
+        ==================
+
+    The line command is host-specific therefore requires you to select a host
+before you can delete the line.
+
+    This command will delete all the rules on a line.
+
+    Example use :
+        (del) > line 50
+
+        3. b) iptables command
+        ======================
+
+    The iptables command is host-specific therefore requires you to select a
+host before you can delete the rule.
+
+    This command will delete the rule on all lines.
+
+    Example use :
+        (del) > iptables -A INPUT -s 0/0 -d 0/0 -j DROP
+
+        3. c) host command
+        ==================
+
+    The host command will delete a host and all the rules associated with it.
+
+    Example use :
+        (del) > host linuxbox
+
+    4. push mode
+    ------------
+
+    The push mode will allow you to push the netfilter configuration to the
+hosts managed by the application.
+
+    Commands available under this mode are the following :
+
+    - ssh
+
+        4. a) ssh command
+        =================
+
+    The ssh command allows you to push the rules via SSH.
+
+    First, a script is generated containing the start template available as
+"start.tpl" in the templates folder. You can customize the start template as you
+wish. The rules inserted and managed in the application are added after the
+start template.
+
+    Secondly, the script is copied via SCP onto the remote host.
+
+    If you connect as root, the program can execute the script directly so that
+the rules take effect. If you don't connect as root, the program can execute
+the script via sudo.
