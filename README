@@ -26,48 +26,53 @@ Rules are stored on the management node (most likely this host) until they are
 FUNCTIONS
 #########
 
+Rule creation :
+  - via translation of Cisco rules
+  - via regular iptables rules
+
 Rule management :
-  - via Cisco rules
-  - via reguler iptables rules
+  - Create per-host iptables rules
+  - Organize rules using "lines"
+  - Batch add rule using templates
 
 Host management :
   - Manage hosts via their name and their DNS name or IP
 
 Rules export :
   - Push rules via SSH
-  - Once pushed, execute rules script directly if root or via sudo if non-root
+  - Once pushed, execute rule script directly if root or via sudo if non-root
 
 
 USE
 ###
 
 Help
-¡¡¡¡¡¡¡
+----
 
 If you feel lost at any time, use the 'help' command which will give you extra
 information.
 
-You may also have to access top help for certain commands. This will be included
+You may also have to access to help for certain commands. This will be included
 in the generic help for the mode you are currently in.
 
 
 Exit
-¡¡¡¡¡¡¡
+----
 If you wish to exit the program, you can enter "quit" at any time.
 
 If you wish to exit the mode you are currently in, you can enter "exit" at any
 time.
 
 Mode Selection
-¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
+--------------
 
 First, you need to select the mode that you will be using. You can choose
 between 4 modes :
 
     - add
+    - show
     - del
     - push
-    - show
 
 The mode you are currently in will be shown at the prompt as shown below.
 
@@ -93,17 +98,110 @@ do not select a host, the command will return an error asking you to select one.
 
     Commands that do not require host selection are the following :
 
-    - exit
+    - select
     - help
     - host
-    - quit
 
     We will now detail the use of the commands available in the add mode.
 
-    1. a) access-list command
-    =========================
+        1. a) access-list command
+        =========================
 
     This command is host-specific therefore requires host selection before it
-can be used.
+can be used. Optionnally, you can select a line on which to add the rule.
 
     This command allows you to add Cisco-style access lists to a host.
+
+    Example uses :
+        (add-host) > access-list input allow ip any any
+        (add-host) > access-list input allow ip host 192.168.1.1 any
+        (add-host) > access-list output allow ip 192.168.0.0 255.255.255.0 any
+
+    The Cisco rules get translated into iptables rules and are added to the
+host. They cannot be converted back from iptables to Cisco.
+
+        1. b) iptables command
+        ======================
+
+    This command is host-specific therefore requires host selection before it
+can be used. Optionnally, you can select a line on which to add the rule.
+
+    This command allows you to add iptables rules directly. For now, no checks
+are performed on iptables rules. Therefore, errors will not be displayed until
+the script is executed.
+
+    Examples uses :
+        (add-host) > iptables -s 0/0 -d 192.168.1.0/24 -j ACCEPT
+        (add-host) > iptables -A PREROUTING -o eth1 -j MASQUERADE
+
+        1. c) line command
+        ==================
+
+    This command allows you to select the line on which you want to insert the
+rule. Before selecting a line, you need to select a host.
+
+    Example use :
+        (add) > select host
+        (add-host) > line 99
+        (add-host:99) >
+
+        1. d) select command
+        ====================
+
+    This command allows you to select a host for host-specific commands.
+
+    Ex : (add) > select linux-host
+
+        1. e) host command
+        ==================
+
+    This command allows you to create a host. In order to create a host, you
+will need to give a name and an IP/hostname.
+
+    ex : (add) > host linuxhost 192.168.1.1
+
+    2. show mode
+    ------------
+
+    The show mode will allow you to display information about objects used in
+this program.
+
+    None of the commands available in the show require host selection. The
+following commands are available in this mode :
+
+    - access-list
+    - hosts
+    - iptables
+    - version
+    - help
+
+        2. a) access-list and iptables command
+        ======================================
+
+    These command allow you to display all the firewall rules associated to a
+specific host.
+
+    Example use :
+        (show) > iptables linuxhost
+        (show) > access-list linuxhost
+
+        2. b) hosts command
+        ===================
+
+    This command displays all the host registered in the application and their
+IP or hostname.
+
+    Example use :
+        (show) > hosts
+
+        2. c) version
+        =============
+
+    This command displays the current version of the application.
+
+    Example use :
+        (show) > version
+
+    3. del mode
+    -----------
+
